@@ -10,3 +10,4 @@ Bot for Discord using Discord.js
 * hammerandchisel/erlpack
 * libsodium-wrappers
 * uws
+* ffmpeg-binaries

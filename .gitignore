@@ -54,6 +54,11 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# Custom stuff
+audio/
+launch_dev.sh
+launch.sh
+
 # dotenv environment variables file
 .env
 
