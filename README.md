@@ -12,6 +12,7 @@ Bot for Discord using Discord.js
 
 * Install nodejs and npm : https://nodejs.org/en/
 * Clone the repository : `git clone https://github.com/TheNouillet/KaarisBotJS2.git`
+* For Windows only : `sudo npm i -g windows-build-tools`
 * Install the depandancies : `npm install -ddd`
 * Configure the `cmds.xml` for your sounds
 * Launch the bot : `node bot.js <your_bot_token>`
