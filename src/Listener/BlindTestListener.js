@@ -73,21 +73,23 @@ class BlindTestListener extends Listener {
 
     getHelpMessage() {
         var content = "\n";
-        content += "\"" + this.commandService.specialCharacter + "bt propose <url>\" to propose a Youtube blind test\n";
+        content += "\"" + this.commandService.specialCharacter + "bt propose <id-video>\" to propose a Youtube blind test\n";
         content += "\"" + this.commandService.specialCharacter + "bt guess <your-guess>\" to try guessing a video name\n";
         content += "\"" + this.commandService.specialCharacter + "bt result\" to determine the winner\n";
         return content;
     }
 
-    propose(url, voiceChannel, textChannel) {
-        voiceChannel.join()
-        .then(connection => {
-            // We fetch the video info to get the name, then we can play the video
-            // (provided nothing has gone wrong)
-            ytdl.getInfo(url, (err, info) => {
-                if(err) {
-                    console.log(err);
-                } else {
+    propose(videoId, voiceChannel, textChannel) {
+        const url = "https://www.youtube.com/watch?v=" + videoId;
+        // We fetch the video info to get the name, then we can play the video
+        // (provided nothing has gone wrong)
+        ytdl.getInfo(url, (err, info) => {
+            if(err) {
+                console.log(err);
+                textChannel.send("Error retrieving the video !");
+            } else {
+                voiceChannel.join()
+                .then(connection => {
                     this.textChannel = textChannel;
                     this.currentBlindTest = new BlindTest(info.title.toLowerCase());
                     // Play the video
@@ -100,12 +102,11 @@ class BlindTestListener extends Listener {
                         }
                         voiceChannel.leave();
                     });
-                }
-            });
-
-        })
-        .catch(err => {
-            console.log(err)
+                })
+                .catch(err => {
+                    console.log(err)
+                });
+            }
         });
     }
 
