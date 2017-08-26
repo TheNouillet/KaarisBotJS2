@@ -140,7 +140,7 @@ class AudioListener extends Listener {
      * @memberof AudioListener
      */
     isQueueEmpty() {
-        return true;
+        return this.audioQueue.length == 0;
     }
 
 
@@ -154,7 +154,7 @@ class AudioListener extends Listener {
         if(this.isQueueEmpty()) {
             return null;
         }
-        return "audio/27.mp3";
+        return this.audioQueue.shift();
     }
 
     /**
@@ -164,7 +164,7 @@ class AudioListener extends Listener {
      * @memberof AudioListener
      */
     pushQueue(fileName) {
-        return true;
+        this.audioQueue.push(fileName);
     }
 }
 
