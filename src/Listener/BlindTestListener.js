@@ -65,6 +65,8 @@ class BlindTestListener extends Listener {
                         msg.reply(this.getHelpMessage());
                         break;
                 }
+            } else {
+                msg.reply(this.getHelpMessage());
             }
         }
     }
