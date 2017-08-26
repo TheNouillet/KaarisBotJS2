@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 
-const AudioListener = require("./lib/Listener/AudioListener");
-const HelpListener = require("./lib/Listener/HelpListener");
-const ThemeService = require('./lib/Utils/ThemeService');
+const AudioListener = require("./src/Listener/AudioListener");
+const HelpListener = require("./src/Listener/HelpListener");
+const ThemeService = require('./src/Utils/ThemeService');
 
 const client = new Discord.Client();
 var botToken = process.argv[2];

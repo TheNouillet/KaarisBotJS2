@@ -12,21 +12,47 @@ class AudioListener extends Listener {
         this.audioQueue = [];
     }
 
+
+    /**
+     * Get a random property of an object
+     * 
+     * @param Object object A JS Object
+     * @returns A random property of it
+     * @memberof AudioListener
+     */
     randomProperty(object) {
         var keys = Object.keys(object);
         return object[keys[Math.floor(keys.length * Math.random())]];
     }
 
+
+    /**
+     * Check if a user is in the allowed user list
+     * 
+     * @param int authorId The user id
+     * @param array allowedIds The allowed user id array
+     * @returns true if the user id is in the allowed user array, else false
+     * @memberof AudioListener
+     */
     isAllowed(authorId, allowedIds) {
-        var res = false;
         allowedIds.forEach((id) => {
             if (id == authorId) {
-                res = true;
+                return true;
             }
         });
-        return res;
+        return false;
     }
 
+
+    /**
+     * Fetch the audio file name corresponding to the given command array.
+     * 
+     * @param array commandArray An array corresponding of the alias and a command
+     * @param integer authorId The id of the user querying the audio file
+     * @returns string The name of the audio file
+     * @throws "not_allowed" if the querying user is not allowed to use the command
+     * @memberof AudioListener
+     */
     getFileName(commandArray, authorId) {
         var res = null;
         var listener = this;
@@ -88,17 +114,22 @@ class AudioListener extends Listener {
     playFile(voiceChannel, fileName) {
         voiceChannel.join()
         .then(connection => { // Connection is an instance of VoiceConnection
-            const dispatcher = connection.playFile(fileName);
-            dispatcher.on('end', () => {
-                var newFileName = this.popQueue();
-                if(newFileName != null) {
-                    this.playFile(voiceChannel, newFileName);
-                } else {
-                    voiceChannel.leave();
-                }
-            });
+            if(!connection.speaking) {
+                var dispatcher = connection.playFile(fileName);
+                dispatcher.on('end', () => {
+                    dispatcher = null;
+                    var newFileName = this.popQueue();
+                    if(newFileName != null) {
+                        this.playFile(voiceChannel, newFileName);
+                    } else {
+                        voiceChannel.leave();
+                    }
+                });
+            } else { // We're already speaking, so we put the audio in the queue
+                this.pushQueue(fileName);
+            }
         })
-        .catch(console.log);
+        .catch(err => {console.log(err)});
     }
 
 
@@ -124,6 +155,16 @@ class AudioListener extends Listener {
             return null;
         }
         return "audio/27.mp3";
+    }
+
+    /**
+     * Push the current audio file in the queue
+     * 
+     * @param string fileName The name of the audio file
+     * @memberof AudioListener
+     */
+    pushQueue(fileName) {
+        return true;
     }
 }
 
