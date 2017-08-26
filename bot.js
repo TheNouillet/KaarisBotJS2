@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 
 const AudioListener = require("./src/Listener/AudioListener");
 const HelpListener = require("./src/Listener/HelpListener");
+const RandomListener = require("./src/Listener/RandomListener");
 const ThemeService = require('./src/Utils/ThemeService');
 
 const client = new Discord.Client();
@@ -13,6 +14,7 @@ client.on('ready', () => {
     client.messageListeners = [];
     client.messageListeners.push(new AudioListener(fileMap));
     client.messageListeners.push(new HelpListener(fileMap));
+    client.messageListeners.push(new RandomListener());
     console.log('Ready!');
 });
 client.on('message', message => {
