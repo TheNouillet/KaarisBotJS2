@@ -73,6 +73,7 @@ class RandomListener extends Listener {
         content += "\"" + this.commandService.specialCharacter + "random delete <element>\" to remove from the random pool\n";
         content += "\"" + this.commandService.specialCharacter + "random pull\" to pull a random element from the pool\n";
         content += "\"" + this.commandService.specialCharacter + "random clean\" to remove all elements\n";
+        content += "\"" + this.commandService.specialCharacter + "random status\" to view all elements\n";
         return content;
     }
 
