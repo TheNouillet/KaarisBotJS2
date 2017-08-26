@@ -17,7 +17,7 @@ Bot for Discord using Discord.js
 * Configure the `cmds.xml` for your sounds
 * Launch the bot : `node bot.js <your_bot_token>`
 
-# Depandancies
+# Dependancies
 
 * discord.js
 * eyes
