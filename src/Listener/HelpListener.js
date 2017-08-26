@@ -33,7 +33,7 @@ class HelpListener extends Listener {
                 content += '\n';
             });
             
-            content += "Type !help <theme> to know more";
+            content += "Type \"" + this.commandService.specialCharacter + "help <theme>\" to know more\n";
         }
         else {
             var themeFound = false;
@@ -61,10 +61,17 @@ class HelpListener extends Listener {
         return content;
     }
 
+    getAdditionalContent() {
+        var content = "Type \"" + this.commandService.specialCharacter + "random\" to get help for the Random feature\n";
+        content += "Type \"" + this.commandService.specialCharacter + "bt\" to get help for the Blind Test feature\n";
+        return content;
+    }
+
     onNotify(msg) {
         var commandArray = this.commandService.parseCommand(msg);
         if(commandArray !== null && commandArray[0] == "help") {
             var msgContent = this.getMessageContent(this.fileMap, commandArray[1]);
+            msgContent += this.getAdditionalContent();
             msg.reply(msgContent);
         }
     }

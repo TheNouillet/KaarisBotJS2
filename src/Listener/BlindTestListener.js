@@ -73,7 +73,7 @@ class BlindTestListener extends Listener {
 
     getHelpMessage() {
         var content = "\n";
-        content += "\"" + this.commandService.specialCharacter + "bt propose <id-video>\" to propose a Youtube blind test\n";
+        content += "\"" + this.commandService.specialCharacter + "bt propose <video-id>\" to propose a Youtube blind test\n";
         content += "\"" + this.commandService.specialCharacter + "bt guess <your-guess>\" to try guessing a video name\n";
         content += "\"" + this.commandService.specialCharacter + "bt result\" to determine the winner\n";
         return content;
