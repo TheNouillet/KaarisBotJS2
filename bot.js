@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const AudioListener = require("./src/Listener/AudioListener");
 const HelpListener = require("./src/Listener/HelpListener");
 const RandomListener = require("./src/Listener/RandomListener");
+const BlindTestListener = require("./src/Listener/BlindTestListener");
 const ThemeService = require('./src/Utils/ThemeService');
 
 const client = new Discord.Client();
@@ -12,6 +13,7 @@ var fileMap = new ThemeService().parseCommandFile(__dirname + '/cmds.xml');
 client.canBroadcast = true;
 client.on('ready', () => {
     client.messageListeners = [];
+    client.messageListeners.push(new BlindTestListener());
     client.messageListeners.push(new AudioListener(fileMap));
     client.messageListeners.push(new HelpListener(fileMap));
     client.messageListeners.push(new RandomListener());
