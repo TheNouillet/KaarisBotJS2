@@ -1,6 +1,13 @@
 "use strict";
 
+var mu = require('mu2');
+
 class Listener {
+    constructor() {
+        this.mu = mu;
+        this.mu.root = __dirname + '/views';
+    }
+
     notify(msg) {
         this.onNotify(msg);
     }

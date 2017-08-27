@@ -2,6 +2,7 @@
 
 const Listener = require("../Listener");
 const CommandService = require('../Utils/CommandService');
+const ThemeService = require('../Utils/ThemeService');
 
 class HelpListener extends Listener {
     constructor(fileMap) {
@@ -9,55 +10,60 @@ class HelpListener extends Listener {
 
         this.fileMap = fileMap;
         this.commandService = new CommandService();
+        this.themeService = new ThemeService();
     }
 
-    getMessageContent(map, themeAlias) {
+    getMessageContent(themeAlias) {
+        if(this.fileMap.length == 0) {
+            return "There is no theme configured !";
+        }
         var content = "";
         if(themeAlias == undefined) {
-            content = "Here are the available themes :\n";
-            
-            map.forEach(function(theme) {
-                content += "- ";
-                var i = 0;
-                for(i = 0; i < theme.aliases.length; i++) {
-                    if(theme.restricted) {
-                        content += "*" + theme.aliases[i] + "*";
-                    }
-                    else {
-                        content += theme.aliases[i];
-                    }
-                    if(i < theme.aliases.length - 1) {
-                        content += " / ";
-                    }
-                }
-                content += '\n';
-            });
-            
-            content += "Type \"" + this.commandService.specialCharacter + "help <theme>\" to know more\n";
+            content = this.getGeneralHelpMessageContent();
+            content += this.getAdditionalContent();
         }
         else {
-            var themeFound = false;
-            map.forEach(function(theme) {
-                theme.aliases.forEach(function(alias) {
-                    if(themeAlias == alias) {
-                        themeFound = true;
-                        content = "Here are the available commands for the theme \"" + themeAlias + "\" :\n";
-                        for(var commandName in theme.commands) {
-                            content += "- " + commandName + "\n";
-                        }
-                        if(theme.restricted) {
-                            content += "This theme is restricted to : \n";
-                            theme.allowedIds.forEach( (id) => {
-                                content += "<@" + id + ">\n";
-                            });
-                        }
-                    }
-                });
-            });
-            if(!themeFound) {
-                content = "Theme \"" + themeAlias + "\" not found";
-            }
+            content = this.getSpecificHelpMessageContent(themeAlias);
         }
+        return content;
+    }
+
+    getGeneralHelpMessageContent() {
+        var content = "Here are the available themes :\n";
+        this.fileMap.forEach( theme => {
+            var line = "- ";
+            if(theme.isRestricted()) {
+                line += "*";
+            }
+            line += theme.aliases.join(" / ");
+            if(theme.isRestricted()) {
+                line += "*";
+            }
+            content += line + "\n";
+        });
+        
+        content += "Type \"" + this.commandService.specialCharacter + "help <theme>\" to know more\n";
+        return content;
+    }
+
+    getSpecificHelpMessageContent(themeAlias) {
+        var theme = this.themeService.getThemeByName(this.fileMap, themeAlias);
+        if(theme == null) {
+            return "Theme \"" + themeAlias + "\" not found";
+        }
+
+        var content = "Here are the available commands for the theme \"" + themeAlias + "\" :\n";
+        theme.commands.forEach(cmd => {
+            content += "- " + cmd.name + "\n";
+        });
+
+        if(theme.isRestricted()) {
+            content += "This theme is restricted to : \n";
+            theme.allowedIds.forEach( (id) => {
+                content += "<@" + id + ">\n";
+            });
+        }
+
         return content;
     }
 
@@ -70,8 +76,7 @@ class HelpListener extends Listener {
     onNotify(msg) {
         var commandArray = this.commandService.parseCommand(msg);
         if(commandArray !== null && commandArray[0] == "help") {
-            var msgContent = this.getMessageContent(this.fileMap, commandArray[1]);
-            msgContent += this.getAdditionalContent();
+            var msgContent = this.getMessageContent(commandArray[1]);
             msg.reply(msgContent);
         }
     }

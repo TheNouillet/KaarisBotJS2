@@ -2,47 +2,17 @@
 
 const Listener = require("../Listener");
 const CommandService = require('../Utils/CommandService');
+const ThemeService = require('../Utils/ThemeService');
 
 class AudioListener extends Listener {
     constructor(fileMap) {
         super();
 
-        this.fileMap = fileMap;
         this.commandService = new CommandService();
+        this.themeService = new ThemeService();
+        this.fileMap = fileMap;
         this.audioQueue = [];
     }
-
-
-    /**
-     * Get a random property of an object
-     * 
-     * @param Object object A JS Object
-     * @returns A random property of it
-     * @memberof AudioListener
-     */
-    randomProperty(object) {
-        var keys = Object.keys(object);
-        return object[keys[Math.floor(keys.length * Math.random())]];
-    }
-
-
-    /**
-     * Check if a user is in the allowed user list
-     * 
-     * @param int authorId The user id
-     * @param array allowedIds The allowed user id array
-     * @returns true if the user id is in the allowed user array, else false
-     * @memberof AudioListener
-     */
-    isAllowed(authorId, allowedIds) {
-        allowedIds.forEach((id) => {
-            if (id == authorId) {
-                return true;
-            }
-        });
-        return false;
-    }
-
 
     /**
      * Fetch the audio file name corresponding to the given command array.
@@ -54,28 +24,17 @@ class AudioListener extends Listener {
      * @memberof AudioListener
      */
     getFileName(commandArray, authorId) {
-        var res = null;
-        var listener = this;
-        this.fileMap.forEach(function (theme) {
-            theme.aliases.forEach(function (alias) {
-                if (commandArray[0] == alias) {
-                    if (theme.restricted && !listener.isAllowed(authorId, theme.allowedIds)) {
-                        console.log(authorId + " not allowed for theme " + alias);
-                        throw "not_allowed";
-                    }
-                    if (commandArray.length < 2) {
-                        res = listener.randomProperty(theme.commands);
-                    }
-                    else {
-                        if (commandArray[1] in theme.commands) {
-                            res = theme.commands[commandArray[1]];
-                        }
-                    }
-                }
-            });
-        });
+        var themeName = commandArray[0];
+        var commandName = commandArray[1];
 
-        return res;
+        var command = null;
+        if(commandName) {
+            command = this.themeService.getCommand(this.fileMap, themeName, commandName, authorId);
+        } else {
+            command = this.themeService.getRandomCommand(this.fileMap, themeName, authorId);
+        }
+
+        return command.fileName;
     }
 
     onNotify(message) {
@@ -88,9 +47,6 @@ class AudioListener extends Listener {
             catch (err) {
                 if (err == "not_allowed") {
                     message.reply("you are not allowed to use this command."); // Notify the user if there is an error
-                }
-                else {
-                    console.log(err);
                 }
             }
             if (fileName) {

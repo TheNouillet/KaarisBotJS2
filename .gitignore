@@ -55,9 +55,10 @@ typings/
 .yarn-integrity
 
 # Custom stuff
-audio/
+audio/*
 launch_dev.sh
 launch.sh
+config/cmds.xml
 
 # dotenv environment variables file
 .env

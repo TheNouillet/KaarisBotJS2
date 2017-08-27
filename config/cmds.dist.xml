@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+    <!-- A theme is a group of commands. You can use it with "!theme1"-->
+    <!-- Or you can play a specific sound with "!theme1 cmd1"-->
+    <theme>
+        <name value="theme1"/>
+        <audio name="cmd1" file="audio/cmd1.mp3"/>
+        <audio name="cmd2" file="audio/cmd2.mp3"/>
+    </theme>
+    <theme>
+        <!-- You can restict a theme to some peoples by writing their id in the <allow> tag-->
+        <allow id="000000000000000000"/>
+        <allow id="111111111111111111"/>
+        <name value="theme2"/>
+        <name value="thm2"/>
+        <audio name="cmd3" file="audio/cmd3.mp3"/>
+    </theme>
+</commands>

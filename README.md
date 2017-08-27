@@ -28,3 +28,4 @@ Bot for Discord using Discord.js
 * libsodium-wrappers
 * uws
 * ffmpeg-binaries
+* ytdl-core

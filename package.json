@@ -10,6 +10,7 @@
     "eyes": "^0.1.8",
     "ffmpeg-binaries": "^3.2.2-3",
     "libsodium-wrappers": "^0.5.2",
+    "mu2": "^0.5.21",
     "node-opus": "^0.2.6",
     "uws": "^8.14.1",
     "xml2js": "^0.4.17",
