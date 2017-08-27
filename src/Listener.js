@@ -15,6 +15,28 @@ class Listener {
     onNotify(msg) {
         throw "not_implemented";
     }
+
+    renderAndReply(originalMessage, templateName, params = null) {
+        var content = "";
+        this.mu.compileAndRender(templateName, params)
+        .on('data', function (data) {
+            content += data.toString();
+        })
+        .on('end', () => {
+            originalMessage.reply(content);
+        });
+    }
+
+    renderAndSend(textChannel, templateName, params = null) {
+        var content = "";
+        this.mu.compileAndRender(templateName, params)
+        .on('data', function (data) {
+            content += data.toString();
+        })
+        .on('end', () => {
+            textChannel.send(content);
+        });
+    }
 }
 
 module.exports = Listener;

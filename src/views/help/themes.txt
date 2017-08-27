@@ -1,0 +1,5 @@
+here are the available themes :
+{{#themes}}- {{#restricted}}*{{/restricted}}{{aliases}}{{#restricted}}*{{/restricted}}
+{{/themes}}
+Type "{{specialCharacter}}random" to get help for the Random feature
+Type "{{specialCharacter}}bt" to get help for the Blind Test feature

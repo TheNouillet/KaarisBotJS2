@@ -1,0 +1,6 @@
+here are the available commands for the theme "{{alias}}" :
+{{#commands}}- {{name}}
+{{/commands}}
+{{#restricted}}This theme is restricted to :
+{{#allowedUsers}}<@{{id}}>
+{{/allowedUsers}}{{/restricted}}
