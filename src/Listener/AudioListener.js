@@ -35,12 +35,13 @@ class AudioListener extends Listener {
      * @memberof AudioListener
      */
     isAllowed(authorId, allowedIds) {
+        var res = false;
         allowedIds.forEach((id) => {
             if (id == authorId) {
-                return true;
+                res = true;
             }
         });
-        return false;
+        return res;
     }
 
 
