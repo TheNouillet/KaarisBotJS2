@@ -9,6 +9,14 @@ const Command = require('../Model/Command');
 
 class ThemeService {
 
+    /**
+     * Parse an XML file to extract a command map. The array consists of Theme and Command classes instances.
+     * 
+     * @param string fileName 
+     * @returns array
+     * @memberof ThemeService
+     * @throws not_exist If the given file doesn't exist
+     */
     parseCommandFile(fileName) {
         // We first verify that the commands file exists
         if(!fs.existsSync(fileName)) {
@@ -31,6 +39,13 @@ class ThemeService {
         return map;
     }
 
+    /**
+     * Convert a parsed XML string to a Theme instance
+     * 
+     * @param string theme 
+     * @returns Theme
+     * @memberof ThemeService
+     */
     getThemeMap(theme) {
         var newTheme = new Theme();
         
@@ -55,6 +70,14 @@ class ThemeService {
         return newTheme;
     }
 
+    /**
+     * Get a theme from the map, by its name.
+     * 
+     * @param array commandMap 
+     * @param string themeName 
+     * @returns Theme|null
+     * @memberof ThemeService
+     */
     getThemeByName(commandMap, themeName) {
         var theme = null;
         commandMap.forEach(thm => {
@@ -65,6 +88,18 @@ class ThemeService {
         return theme;
     }
 
+    /**
+     * Get a command from a theme. Check the message author permissions on the theme
+     * 
+     * @param array commandMap 
+     * @param string themeName 
+     * @param string commandName 
+     * @param integer authorId 
+     * @returns Command|null
+     * @memberof ThemeService
+     * @throws no_theme If there is no theme named that way
+     * @throws not_allowed If the author is not allowed to use the theme
+     */
     getCommand(commandMap, themeName, commandName, authorId) {
         var theme = this.getThemeByName(commandMap, themeName);
         if(theme == null) {
@@ -84,6 +119,18 @@ class ThemeService {
         return command;
     }
 
+
+    /**
+     * Get a random command from a theme. Check the message author permissions on the theme.
+     * 
+     * @param array commandMap 
+     * @param string themeName 
+     * @param integer authorId 
+     * @returns Command|null
+     * @memberof ThemeService
+     * @throws no_theme If there is no theme named that way
+     * @throws not_allowed If the author is not allowed to use the theme
+     */
     getRandomCommand(commandMap, themeName, authorId) {
         var theme = this.getThemeByName(commandMap, themeName);
         if(theme == null) {

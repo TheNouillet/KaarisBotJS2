@@ -61,7 +61,7 @@ class AudioListener extends Listener {
 
 
     /**
-     * Play an audi stream from a file to a voice channel
+     * Play an audio stream from a file to a voice channel
      * 
      * @param VoiceChannel voiceChannel The voice channel to connect to
      * @param string fileName The name of the file to play
