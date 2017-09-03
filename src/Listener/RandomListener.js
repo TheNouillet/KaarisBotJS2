@@ -2,12 +2,14 @@
 
 const Listener = require("../Listener");
 const CommandService = require('../Utils/CommandService');
+const TemplateHelper = require('../Utils/TemplateHelper');
 
 class RandomListener extends Listener {
     constructor() {
         super();
 
         this.commandService = new CommandService();
+        this.templateHelper = new TemplateHelper();
         this.pool = [];
     }
 
@@ -19,22 +21,28 @@ class RandomListener extends Listener {
                     case "pull":
                         try {
                             var element = this.pullFromPool();
-                            msg.reply(element + " !");
+                            this.renderAndReply(msg, 'random/pull.txt', {
+                                element: element
+                            });
                         } catch (err) {
                             if(err === "empty_pool") {
-                                msg.reply("no element in pool !");
+                                this.renderAndReply(msg, 'random/no_element.txt');
                             }
                         }
                         break;
                     case "clean":
                         this.cleanPool();
-                        msg.reply("pool cleaned !");
+                        this.renderAndReply(msg, 'random/clean.txt');
                         break;
                     case "status":
-                        msg.reply(this.getStatusMessage());
+                        this.renderAndReply(msg, 'random/status.txt', {
+                            pool: this.templateHelper.prepareRandomPool(this.pool)
+                        });
                         break;
                     default:
-                        msg.reply(this.getHelpMessage());
+                        this.renderAndReply(msg, 'random/help.txt', {
+                            specialCharacter: this.commandService.specialCharacter
+                        });
                         break;
                 }
             } else if(commandArray.length > 2) {
@@ -42,41 +50,30 @@ class RandomListener extends Listener {
                 switch (commandArray[1]) {
                     case "add":
                         this.addToPool(element);
-                        msg.reply("added \"" + element + "\" to the pool.");
+                        this.renderAndReply(msg, 'random/add.txt', {
+                            element: element
+                        });
                         break;
                     case "remove":
-                        if(this.removeFromPool(element)) {
-                            msg.reply("removed \"" + element + "\" from the pool.");
-                        } else {
-                            msg.reply("\"" + element + "\" is not in the pool !");
-                        }
+                        var success = this.removeFromPool(element);
+                        this.renderAndReply(msg, 'random/remove.txt', {
+                            success: success,
+                            element: element
+                        });
                         break;
                     default:
-                        msg.reply(this.getHelpMessage());
+                        this.renderAndReply(msg, 'random/help.txt', {
+                            specialCharacter: this.commandService.specialCharacter
+                        });
                         break;
                 }
             } else {
-                msg.reply(this.getHelpMessage());
+                this.renderAndReply(msg, 'random/help.txt', {
+                    specialCharacter: this.commandService.specialCharacter
+                });
             }
         }
     }
-
-
-    /**
-     * Retrieve the help message
-     * 
-     * @returns string The help message content
-     * @memberof RandomListener
-     */
-    getHelpMessage() {
-        var content = "\n\"" + this.commandService.specialCharacter + "random add <element>\" to add to the random pool\n";
-        content += "\"" + this.commandService.specialCharacter + "random delete <element>\" to remove from the random pool\n";
-        content += "\"" + this.commandService.specialCharacter + "random pull\" to pull a random element from the pool\n";
-        content += "\"" + this.commandService.specialCharacter + "random clean\" to remove all elements\n";
-        content += "\"" + this.commandService.specialCharacter + "random status\" to view all elements\n";
-        return content;
-    }
-
 
     /**
      * Add an element to the pool
@@ -129,24 +126,6 @@ class RandomListener extends Listener {
      */
     cleanPool() {
         this.pool = [];
-    }
-
-
-    /**
-     * Generate the list of elements in the pool
-     * 
-     * @returns string The message content to display the list
-     * @memberof RandomListener
-     */
-    getStatusMessage() {
-        if(this.pool.length === 0) {
-            return "no element in pool !";
-        }
-        var content = "\n";
-        this.pool.forEach(element => {
-            content += "- *" + element + "*\n";
-        });
-        return content;
     }
 }
 

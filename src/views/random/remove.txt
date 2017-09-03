@@ -1,0 +1,1 @@
+{{^success}}{{element}} is not in the random pool ! {{/success}}{{#success}}removed {{element}} from the random pool{{/success}}

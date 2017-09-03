@@ -1,0 +1,3 @@
+{{^pool.length}}there is no element in the pool !{{/pool.length}}{{#pool.length}}
+{{#pool}}- *{{name}}*
+{{/pool}}{{/pool.length}}

@@ -1,0 +1,5 @@
+"{{specialCharacter}}random add <element>" to add to the random pool.
+"{{specialCharacter}}random delete <element>" to remove from the random pool.
+"{{specialCharacter}}random pull" to pull a random element from the pool.
+"{{specialCharacter}}random clean" to remove all elements.
+"{{specialCharacter}}random status" to view all elements.

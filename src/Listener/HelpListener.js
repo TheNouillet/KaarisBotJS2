@@ -3,6 +3,7 @@
 const Listener = require("../Listener");
 const CommandService = require('../Utils/CommandService');
 const ThemeService = require('../Utils/ThemeService');
+const TemplateHelper = require('../Utils/TemplateHelper');
 
 class HelpListener extends Listener {
     constructor(fileMap) {
@@ -11,13 +12,15 @@ class HelpListener extends Listener {
         this.fileMap = fileMap;
         this.commandService = new CommandService();
         this.themeService = new ThemeService();
+        this.templateHelper = new TemplateHelper();
     }
 
     onNotify(msg) {
         var commandArray = this.commandService.parseCommand(msg);
         if(commandArray !== null && commandArray[0] == "help") {
-            if(this.fileMap.length == 0) {
-                this.renderAndReply(msg, 'help/no_themes_configured.txt');
+            if(this.fileMap == null || this.fileMap.length == 0) {
+                this.renderAndReply(msg, 'help/no_theme_configured.txt');
+                return;
             }
             var themeAlias = commandArray[1];
             if(themeAlias == undefined) {
@@ -30,22 +33,11 @@ class HelpListener extends Listener {
     }
 
     replyThemesHelp(originalMessage) {
-        var themes = this.prepareThemes();
+        var themes = this.templateHelper.prepareThemes(this.fileMap);
         this.renderAndReply(originalMessage, 'help/themes.txt', {
             themes: themes,
             specialCharacter: this.commandService.specialCharacter
         });
-    }
-
-    prepareThemes() {
-        var res = [];
-        this.fileMap.forEach(theme => {
-            res.push({
-                aliases: theme.aliases.join(" / "),
-                restricted: theme.isRestricted()
-            });
-        });
-        return res;
     }
 
     replyCommandsHelp(originalMessage, themeAlias) {
@@ -57,16 +49,8 @@ class HelpListener extends Listener {
             alias: themeAlias,
             commands: theme.commands,
             restricted: theme.isRestricted(),
-            allowedUsers: this.prepareAllowedIds(theme)
+            allowedUsers: this.templateHelper.prepareAllowedIds(theme)
         });
-    }
-
-    prepareAllowedIds(theme) {
-        var res = [];
-        theme.allowedIds.forEach(id => {
-            res.push({id: id});
-        });
-        return res;
     }
 }
 

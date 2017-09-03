@@ -46,14 +46,14 @@ class AudioListener extends Listener {
             }
             catch (err) {
                 if (err == "not_allowed") {
-                    message.reply("you are not allowed to use this command."); // Notify the user if there is an error
+                    this.renderAndReply(message, 'audio/not_allowed.txt');
                 }
             }
             if (fileName) {
                 if (message.member.voiceChannel) {
                     this.playFile(message.member.voiceChannel, fileName);
                 } else {
-                    message.reply('You need to join a voice channel first!');
+                    this.renderAndReply(message, 'audio/join_channel.txt');
                 }
             }
         }
