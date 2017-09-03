@@ -27,9 +27,9 @@ class BlindTestListener extends Listener {
                         .then(msg => {
                             var voiceChannel = msg.member.voiceChannel;
                             if(!voiceChannel) {
-                                msg.reply("you need to join a voice channel first!");
+                                this.renderAndReply(msg, "blind_test/join_channel.txt");
                             } else if(this.currentBlindTest != null) {
-                                msg.reply("there is already a blind test occuring !");
+                                this.renderAndReply(msg, "blind_test/bt_occuring.txt");
                             } else {
                                 this.propose(parameter, voiceChannel, msg.channel);
                             }
@@ -37,7 +37,7 @@ class BlindTestListener extends Listener {
                         break;
                     case "guess":
                         if(this.currentBlindTest == null) {
-                            msg.reply("there is no blind test currently occuring !");
+                            this.renderAndReply(msg, "blind_test/no_bt.txt");
                         } else {
                             var responseArray = commandArray.slice(2);
                             var response = responseArray.join(" ");
@@ -45,7 +45,9 @@ class BlindTestListener extends Listener {
                         }
                         break;
                     default:
-                        msg.reply(this.getHelpMessage());
+                        this.renderAndReply(msg, "blind_test/help.txt", {
+                            specialCharacter: this.commandService.specialCharacter
+                        });
                         break;
                 }
             } else if(commandArray.length > 1) {
@@ -54,29 +56,25 @@ class BlindTestListener extends Listener {
                     case "result":
                         var voiceChannel = msg.member.voiceChannel;
                         if(this.currentBlindTest == null) {
-                            msg.reply("there is no blind test currently occuring !");
+                            this.renderAndReply(msg, "blind_test/no_bt.txt");
                         } else if(!voiceChannel) {
-                            msg.reply("you need to join a voice channel first!");
+                            this.renderAndReply(msg, "blind_test/join_channel.txt");
                         } else {
                             this.result(msg.member.voiceChannel);
                         }
                         break;
                     default:
-                        msg.reply(this.getHelpMessage());
+                        this.renderAndReply(msg, "blind_test/help.txt", {
+                            specialCharacter: this.commandService.specialCharacter
+                        });
                         break;
                 }
             } else {
-                msg.reply(this.getHelpMessage());
+                this.renderAndReply(msg, "blind_test/help.txt", {
+                    specialCharacter: this.commandService.specialCharacter
+                });
             }
         }
-    }
-
-    getHelpMessage() {
-        var content = "\n";
-        content += "\"" + this.commandService.specialCharacter + "bt propose <video-id>\" to propose a Youtube blind test\n";
-        content += "\"" + this.commandService.specialCharacter + "bt guess <your-guess>\" to try guessing a video name\n";
-        content += "\"" + this.commandService.specialCharacter + "bt result\" to determine the winner\n";
-        return content;
     }
 
     propose(videoId, voiceChannel, textChannel) {
@@ -86,7 +84,7 @@ class BlindTestListener extends Listener {
         ytdl.getInfo(url, (err, info) => {
             if(err) {
                 console.log(err);
-                textChannel.send("Error retrieving the video !");
+                this.renderAndSend(textChannel, "blind_text/error.txt");
             } else {
                 voiceChannel.join()
                 .then(connection => {
@@ -111,17 +109,18 @@ class BlindTestListener extends Listener {
     }
 
     result(voiceChannel) {
+        var winnerId = null;
         try {
             var winnerId = this.currentBlindTest.computeWinner();
-            this.textChannel.send("<@" + winnerId + "> win this one !");
         } catch (error) {
-            if(error === "no_response") {
-                this.textChannel.send("No submitions, no winners !");
-            } else {
+            if(error !== "no_response") {
                 console.log(error);
             }
         }
-        this.textChannel.send("The video was **" + this.currentBlindTest.videoName + "**");
+        this.renderAndSend(this.textChannel, "blind_test/result.txt", {
+            winner: winnerId,
+            videoName: this.currentBlindTest.videoName
+        });
 
         this.textChannel = null;
         this.currentBlindTest = null;
